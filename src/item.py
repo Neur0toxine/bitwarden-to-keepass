@@ -7,6 +7,7 @@ class ItemType(IntEnum):
     SECURE_NOTE = 2
     CARD = 3
     IDENTITY = 4
+    SSHKEY = 5
 
 
 class CustomFieldType(IntEnum):
@@ -83,3 +84,6 @@ class Item:
         secret = params.get("secret", self.item["login"]["totp"])
 
         return secret, f"{period};{digits}"
+
+    def get_ssh_key(self) -> bytes:
+        return self.item["sshKey"]["privateKey"].encode('utf-8')

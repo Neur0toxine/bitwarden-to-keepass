@@ -94,6 +94,27 @@ def bitwarden_to_keepass(args: Namespace) -> None:
                     protect=field["type"] == CustomFieldType.HIDDEN,
                 )
 
+            if item["type"] == ItemType.SSHKEY:
+                settings_id = kp.add_binary('''<?xml version="1.0" encoding="UTF-16"?>
+<EntrySettings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <AllowUseOfSshKey>true</AllowUseOfSshKey>
+  <AddAtDatabaseOpen>true</AddAtDatabaseOpen>
+  <RemoveAtDatabaseClose>true</RemoveAtDatabaseClose>
+  <UseConfirmConstraintWhenAdding>false</UseConfirmConstraintWhenAdding>
+  <UseLifetimeConstraintWhenAdding>false</UseLifetimeConstraintWhenAdding>
+  <LifetimeConstraintDuration>600</LifetimeConstraintDuration>
+  <Location>
+    <SelectedType>attachment</SelectedType>
+    <AttachmentName>{}</AttachmentName>
+    <SaveAttachmentToTempFile>false</SaveAttachmentToTempFile>
+    <FileName/>
+  </Location>
+</EntrySettings>
+'''.format("id_ssh").encode("utf-16le"))
+                entry.add_attachment(settings_id, "KeeAgent.settings")
+                attachment_id = kp.add_binary(bw_item.get_ssh_key())
+                entry.add_attachment(attachment_id, "id_ssh")
+
             for attachment in bw_item.get_attachments():
                 attachment_raw = subprocess.check_output(
                     [
