@@ -1,4 +1,5 @@
 from enum import IntEnum
+from datetime import datetime
 from urllib.parse import parse_qsl, urlsplit
 
 
@@ -87,3 +88,49 @@ class Item:
 
     def get_ssh_key(self) -> bytes:
         return self.item["sshKey"]["privateKey"].encode('utf-8')
+    
+    def get_fido2_credentials(self) -> list:
+        if "login" not in self.item or "fido2Credentials" not in self.item["login"]:
+            return []
+
+        return [FIDO2Credentials(cred) for cred in self.item["login"]["fido2Credentials"]]
+
+class FIDO2Credentials:
+    def __init__(self, data: dict) -> None:
+        self.data = data
+
+    def get_credential_id(self) -> str:
+        return self.data["credentialId"]
+
+    def get_key_type(self) -> str:
+        return self.data["keyType"]
+
+    def get_key_algorithm(self) -> str:
+        return self.data["keyAlgorithm"]
+
+    def get_key_curve(self) -> str:
+        return self.data["keyCurve"]
+
+    def get_key_value(self) -> str:
+        return self.data["keyValue"]
+
+    def get_rp_id(self) -> str:
+        return self.data["rpId"]
+
+    def get_user_handle(self) -> str:
+        return self.data["userHandle"]
+
+    def get_counter(self) -> str:
+        return self.data["counter"]
+
+    def get_rp_name(self) -> str:
+        return self.data["rpName"]
+
+    def get_user_name(self) -> str:
+        return self.data["userName"]
+
+    def get_discoverable(self) -> bool:
+        return self.data["discoverable"].lower() == "true"
+
+    def get_creation_date(self) -> datetime:
+        return datetime.strptime(self.data["creationDate"], "%Y-%m-%dT%H:%M:%S.%fZ")
