@@ -42,6 +42,4 @@ python3 bitwarden-to-keepass.py --bw-session BW_SESSION --database-path DATABASE
 
 This version has additional features in comparison to the [original](https://github.com/davidnemec/bitwarden-to-keepass):
 - Support for SSH keys export in KeePassXC format (every key will be named as `id_ssh`).
-
-Planned:
-- Support Passkeys export.
+- Support for Passkeys export.
