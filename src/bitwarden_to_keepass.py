@@ -18,7 +18,6 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
-
 def bitwarden_to_keepass(args: Namespace) -> None:
     try:
         kp = PyKeePass(

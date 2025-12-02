@@ -1,10 +1,16 @@
 #!/bin/bash
+set -e
 
 function log_error() {
     echo "Error: $1" >&2
 }
 
 function get_bw_session() {
+    if [[ -n "$BW_SESSION" ]]; then
+        echo "$BW_SESSION"
+        return
+    fi
+    echo "BW_SESSION not set, attempting to login/unlock Bitwarden..."
     local session
     session=$($BW_PATH login --raw || $BW_PATH unlock --raw)
     if [[ -z "$session" ]]; then
@@ -19,6 +25,11 @@ if ! $BW_PATH config server "$BITWARDEN_URL"; then
     log_error "Ignoring error on configuring server. It might already be set."
 fi
 
+if [[ $# -gt 0 ]]; then
+    echo "Executing custom command: $*"
+    exec "$@"
+fi
+
 # Export Bitwarden session key
 export BW_SESSION=$(get_bw_session)
 
@@ -29,7 +40,7 @@ if ! $BW_PATH sync; then
 fi
 
 # Run the main export script
-if ! poetry run python run.py; then
+if ! python run.py; then
     log_error "Failed to run main export script."
     exit 1
 fi

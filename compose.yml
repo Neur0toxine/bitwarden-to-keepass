@@ -1,7 +1,7 @@
 services:
   bitwarden-to-keepass:
     build: .
-    command: ["/bin/bash", "entrypoint.sh"]
+    image: bitwarden-to-keepass:latest
     volumes:
       - ./exports:/exports
       - 'bw-config:/root/.config/Bitwarden CLI'
