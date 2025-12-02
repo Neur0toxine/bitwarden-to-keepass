@@ -6,11 +6,6 @@ function log_error() {
 }
 
 function get_bw_session() {
-    if [[ -n "$BW_SESSION" ]]; then
-        echo "$BW_SESSION"
-        return
-    fi
-    echo "BW_SESSION not set, attempting to login/unlock Bitwarden..."
     local session
     session=$($BW_PATH login --raw || $BW_PATH unlock --raw)
     if [[ -z "$session" ]]; then
